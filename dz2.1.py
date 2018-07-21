@@ -35,42 +35,36 @@ def read_cook_book(cook_book_path):
                     cook_book[dish.strip()].append(
                         {
                             'ingridient_name': ingridient_data[0],
-                            'quantity': ingridient_data[1],
+                            'quantity': int(ingridient_data[1]),
                             'measure': ingridient_data[2]
                         }
                     )
 
-            print('')
             if current_line > cb_lines_number:  # Если последняя строка в файле
                 break
 
     return cook_book
 
 
-def get_shop_list_by_dishes(dishes, person_count):
-    cook_book_db = read_cook_book('dz2.1.txt')
+def get_shop_list_by_dishes(dishes, person_count, cook_book_file_path):
+    cook_book_db = read_cook_book(cook_book_file_path)
     shop_list_by_dishes = {}
 
     for i in dishes:
-        # if i in cook_book_db:
-        #     print(i, '!!!!!!!!')
-        # else:
-        #     print('?????????????')
-        print(i)
-        print(cook_book_db[i])
-        print(cook_book_db[i][0])
-        # if cook_book_db[i]['ingridient_name'] in shop_list_by_dishes:
-        #     print('Yes!!!')
-        # else:
-        #     shop_list_by_dishes[cook_book_db[i]['ingridient_name']].append(
-        #         {
-        #             'measure': cook_book_db[i]['measure'],
-        #             'quantity': cook_book_db[i]['quantity']
-        #          }
-        #     )
-        #     pprint(shop_list_by_dishes)
+        for ii in range(len(cook_book_db[i])):
+            ingridient_name = cook_book_db[i][ii]['ingridient_name']
+            if ingridient_name in shop_list_by_dishes:
+                shop_list_by_dishes[ingridient_name]['quantity'] += \
+                    cook_book_db[i][ii]['quantity'] * person_count
+            else:
+                shop_list_by_dishes[ingridient_name] = {
+                    'measure': cook_book_db[i][ii]['measure'],
+                    'quantity': cook_book_db[i][ii]['quantity'] * person_count
+                    }
+
+    return shop_list_by_dishes
 
 
-# pprint(read_cook_book('dz2.1.txt'))
-
-get_shop_list_by_dishes(['Запеченный картофель', 'Омлет'], 2)
+pprint(get_shop_list_by_dishes(
+    ['Фахитос', 'Запеченный картофель', 'Омлет'], 3, 'dz2.1.txt')
+       )
